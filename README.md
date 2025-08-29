@@ -4,13 +4,11 @@ RBAC-System is a robust Python Role-Based Access Control (RBAC) system designed 
 ---
 
 ## Core Functionality
-```
 👥 **Role-Based Access:** Each user’s permissions are determined by their department and role, ensuring proper access control.
 📱 **Multi-Factor Authentication (MFA):** QR-code-based TOTP authentication with Google Authenticator or Authy. 
 🎛️ **Custom Dashboards:** Personalized dashboards for each role provide relevant tools and information.  
 ⏰ **Time-Based Login Restrictions:** Users can only log in during working hours (8 AM–4 PM) unless granted admin authorization.  
 📌 **Comprehensive Activity Tracking:** Every login, logout, and action is recorded for audit and accountability purposes.  
-```
 ---
 ### Quick Features
 ```
@@ -70,3 +68,4 @@ RBAC-System/
 - Some default logging credentials are in user.txt
 
 - default users have 2fa appended already, to get the codes, scan the generated QRcodes in [User_QRcodes folder](User_QRcodes/) with an authenticator app.
+
