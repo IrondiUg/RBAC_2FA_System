@@ -61,7 +61,9 @@ RBAC-System/
 │
 ├── dashboards.py               
 ├── main.py                      
-├── requirements.txt             
+├── requirements.txt
+├── users.txt             
 ├── README.md                    
 └── LICENSE                     
 ```
+- Some default logging credentials are in user.txt
