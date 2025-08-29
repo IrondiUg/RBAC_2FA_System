@@ -66,4 +66,5 @@ RBAC-System/
 ├── README.md                    
 └── LICENSE                     
 ```
-- Some default logging credentials are in users.txt
+- Some default logging credentials are in user.txt
+- default users have 2fa appended already, to get the codes, scan the generated QRcodes in [User_QRcodes folder](User_QRcodes/) with an authenticator app.
