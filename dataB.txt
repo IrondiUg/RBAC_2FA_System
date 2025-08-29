@@ -1,0 +1,3 @@
+Username: ugo || Password: eecdbe753572a972c5f5b907c039b19ebe3fb95c1835fb96240ed6077314887b || Department: IT || Role: ADMIN
+Username: ugobest || Password: edb36ef7543d17eb8d160c1f66329bd0cc95175f71e7efd3267a181cf90b3b2b || Department: IT || Role: ADMIN || 2fa_Key:PLMFLD3QEGFBF6P3MTAWCRS45YUJNLZN
+Username: fave || Password: 171b5d1d2c78b6cf3bfc4060907f95ab3cce4fb54153d24700ec92d1eb87b6e7 || Department: HR || Role: MANAGER || 2fa_Key:TR4XG5DAGWC2OL2STAXHAJJV6QSVVS76
