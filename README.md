@@ -66,4 +66,4 @@ RBAC-System/
 ├── README.md                    
 └── LICENSE                     
 ```
-- Some default logging credentials are in user.txt
+- Some default logging credentials are in users.txt
