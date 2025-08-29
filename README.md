@@ -9,9 +9,20 @@ RBAC-System is a robust Python Role-Based Access Control (RBAC) system designed 
 🎛️ **Custom Dashboards:** Personalized dashboards for each role provide relevant tools and information.  
 ⏰ **Time-Based Login Restrictions:** Users can only log in during working hours (8 AM–4 PM) unless granted admin authorization.  
 📌 **Comprehensive Activity Tracking:** Every login, logout, and action is recorded for audit and accountability purposes.  
- 
 
 ---
+### Quick Features
+```| Feature                          | Status |
+|----------------------------------|--------|
+| 🔒 Secure Login Authentication   | ✅     |
+| 📊 Department-Specific Dashboards | ✅     |
+| 🛡️ Rank-Based Permissions        | ✅     |
+| 📝 Activity Logging              | ✅     |
+| ⏰ Time-Based Login Restrictions | ✅     |
+| 📱 Multi-Factor Authentication   | ✅     |
+| 📌 Comprehensive Session Tracking | ✅     |
+| 🗂️ Logs Export (txt)             | ✅     |
+```
 
 ## Requirements
 - Python 3.8 or later  
