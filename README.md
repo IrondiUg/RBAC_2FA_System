@@ -69,4 +69,5 @@ RBAC-System/
 - Some default logging credentials are in user.txt
 - default users have 2fa appended already, to get the codes, scan the generated QRcodes in [User_QRcodes folder](User_QRcodes/) with an authenticator app.
 
-- ⚠⚠ PLEASE ENSURE SYSTEM'S CLOCK IS IN SYNC WITH THE DEVICE IN WHERE YOUR AUTHENTICATION APP/CODES IS/ARE
+
+- ⚠⚠ PLEASE ENSURE SYSTEM'S CLOCK IS IN SYNC WITH THE DEVICE WHERE YOUR AUTHENTICATION APP/CODES IS/ARE
