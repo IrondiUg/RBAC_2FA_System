@@ -1,12 +1,16 @@
 import time
+import os
 
 def it_admin_dashboard(user_dict):
+    os.system("cls")
     print(f"\nWelcome {user_dict['Username'].upper()} to the IT Admin Dashboard")
     print("1. VIEW ALL USERS")
     print("2. MANAGE IT RESOURCES")
     print("3. REGISTER A NEW USER")
-    print("4. CONTACT SUPPORT")
-    print("5. LOGOUT")
+    print("4. VIEW USER DATABASE")
+    print("5. VIEW SYSTEM LOGS")
+    print("6. CONTACT SUPPORT")
+    print("7. LOGOUT")
     while True:
         choice = input("\n")
         if choice == "1":
@@ -18,9 +22,16 @@ def it_admin_dashboard(user_dict):
             time.sleep(1)
             addUser(user_dict)
         elif choice == "4":
+            from main import view_database
+            time.sleep(1)
+            view_database(user_dict)
+        elif choice == "5":
+            from main import view_logs
+            view_logs(user_dict)
+        elif choice == "6":
             from main import help_desk
             help_desk()
-        elif choice == "5":
+        elif choice == "7":
             print("\nExiting the program...")
             time.sleep(1)
             from main import menu, logs
@@ -29,7 +40,7 @@ def it_admin_dashboard(user_dict):
         else:
             print("\nInvalid choice, please try again.")
             time.sleep(1)
-            continue
+        continue
 def it_engineer_dashboard(user_dict):
     print(f"\nWelcome {user_dict['Username'].upper()} to the IT Engineer Dashboard")
     print("1. VIEW ASSIGNED TASKS")
