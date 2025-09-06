@@ -69,7 +69,7 @@ RBAC-System/
 
 ## Note
 For the time based access control, uncomment this section in main.py to be able to use it, it works with your machine time.
-(https://prnt.sc/c4RgHVj3GWHk)
+![see image](https://prnt.sc/c4RgHVj3GWHk)
 
 
 - Some default logging credentials are in user.txt
@@ -77,5 +77,6 @@ For the time based access control, uncomment this section in main.py to be able 
 
 
 - ⚠⚠ PLEASE ENSURE SYSTEM'S CLOCK IS IN SYNC WITH THE DEVICE WHERE YOUR AUTHENTICATION APP/CODES IS/ARE
+
 
 
