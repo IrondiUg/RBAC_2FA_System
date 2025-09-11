@@ -77,9 +77,5 @@ RBAC-System/
 
 
 - ⚠⚠ PLEASE ENSURE SYSTEM'S CLOCK IS IN SYNC WITH THE DEVICE WHERE YOUR AUTHENTICATION APP/CODES IS/ARE
-
-
-
-
-
-
+- For any issues, please open an issue on the GitHub repository.
+- Contributions are welcome! Feel free to fork the repository and submit pull requests.

@@ -2,8 +2,10 @@ import os
 import pyotp
 import qrcode
 import time
+import utils
 import hashlib
 import datetime
+from datetime import timedelta
 from dashboard import (
     it_admin_dashboard,
     it_engineer_dashboard,
@@ -16,6 +18,71 @@ from dashboard import (
     finance_clerk_dashboard,
 )
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+login_attempt_limit = 3
+lockout_duration = timedelta(minutes=2)
+login_attempts = {}
+
+def create_ticket(username, issue):
+    tickets = utils.load_tickets()
+    ticket_id = len(tickets) + 1
+    ticket = {
+        "id":ticket_id,
+        "username": username,
+        "issue": issue,
+        "status": "OPEN",
+        "messages": [{"from": username, "msg": issue}]
+    }
+    utils.append_ticket(ticket)
+    logs(username, "CREATED A SUPPORT TICKET -- ", f"Ticket ID: {ticket['id']}")
+    print(f"\n🎫 Ticket Number ({ticket['id']}) created for {username}.")
+    time.sleep(2)
+    help_desk(username)
+    return ticket["id"]
+
+def account_locked(username):
+    now = time.time()
+    if username in login_attempts:
+        locked_until = login_attempts[username].get("locked_until", 0)
+        if locked_until > now:
+            remaining = int(locked_until - now)
+            minute, sec = divmod(remaining, 60)
+            time.sleep(1)
+            print(f"\nAccount is locked Due To Multiple Failed Attempts. Try again in {minute} minutes : {sec} seconds.")
+            print("\nPress 'S' to contact support. Press any other key to return to main menu.")
+            choice = input("\n").strip().lower()
+            if choice == 's':
+                help_desk(username)
+            else:
+                menu()
+            return True
+    return False
+
+def record_failed_attempt(username):
+    if username not in login_attempts:
+        login_attempts[username] = {"failed_attempts": 0, "locked_until": 0}
+    login_attempts[username]["failed_attempts"] += 1
+    if login_attempts[username]["failed_attempts"] >= login_attempt_limit:
+        lock_till = time.time() + lockout_duration.total_seconds()
+        login_attempts[username]["locked_until"] = lock_till
+        time.sleep(1)
+        print(f"\nToo Many Failed Attempts!! Account Locked For {lockout_duration.total_seconds()//60} minutes.")
+        logs(username, "ACCOUNT LOCKED DUE TO MULTIPLE FAILED LOGIN ATTEMPTS")
+        time.sleep(2)
+        input("\n\nPress Enter to return...")
+        login_attempts[username]["failed_attempts"] = 0
+
+def successful_login(username):
+    now = time.time()
+    if username in login_attempts:
+        locked_until = login_attempts[username].get("locked_until")
+        if locked_until > now:
+            remaining = int(locked_until - now)
+            minute, sec = divmod(remaining, 60)
+            print(f"\nAccount is locked. Try again in {minute} minutes : {sec} seconds.")
+            logs(username, "FAILED LOGIN ATTEMPT ON LOCKED ACCOUNT")
+            return False
+        del login_attempts[username]
+    return True
 
 def view_database(user_dict):
     with open(os.path.join(BASE_DIR, "dataB.txt"), "r", encoding="utf-8") as file:
@@ -121,6 +188,7 @@ def view_logs(user_dict):
             print(line.strip())
     input("\nPress Enter to return to the dashboard...")
     it_admin_dashboard(user_dict)
+
 def work_hours():
     time = datetime.datetime.now().time()
     return 8 <= time.hour < 16
@@ -128,25 +196,109 @@ def work_hours():
 def hash_password(password: str) -> str:
     return hashlib.sha256(password.encode("utf-8")).hexdigest()
 
-def help_desk():
-    """Function to display help desk information."""
-    os.system("cls")
-    print("\n==HELP DESK==")
-    print("For assistance, please contact ...")
-          
+def help_desk(username = None):
+    if not username:
+        username = input("Enter your username: ").strip()
+        db_file = os.path.join(BASE_DIR, "dataB.txt")
+        found = False
+        if os.path.exists(db_file):
+            with open(db_file, "r", encoding="utf-8") as f:
+                for line in f:
+                    if not line.strip():
+                        continue
+                    parts = line.strip().split(" || ")
+                    user_data = {}
+                    for p in parts:
+                        if ":" in p:
+                            k, v = p.split(":", 1)
+                            user_data[k.strip()] = v.strip()
+                    if user_data.get("Username") == username:
+                        found = True
+                        break
+
+        if not found:
+            print("\n⚠ User not found. Returning to main menu.")
+            time.sleep(1)
+            return
+    while True:
+        os.system("cls")
+        print("\n==HELP DESK==")
+        print("1. Open a Ticket")
+        print("2. View Opened Tickets")
+        print("3. Back to Main Menu")
+        choice = input("\n").strip()
+        if choice == '1':
+            create_ticket(username.strip(), issue=input("Describe your issue: ").strip())
+            break
+        elif choice == '2':
+            view_my_tickets(username)
+
+        elif choice == '3':
+            return
+        else:
+            print("Invalid Option")
+            time.sleep(1)
+
+def view_my_tickets(username):
+    tickets = utils.load_tickets()
+    user_tickets = [t for t in tickets if t.get("username") == username and t.get("status") == "OPEN"]
+    while True:
+        if not user_tickets:
+            print("\n✅ You have no active tickets.")
+            time.sleep(2)
+            return
+
+        os.system("cls")
+        print(f"\n📂 Active Tickets for {username}:")
+        for t in user_tickets:
+            print(f"\n=== Ticket Number - {t['id']} ===")
+            print(f"Issue: {t['issue']}")
+            print(f"Status: {t['status']}")
+            print("\n💬 List:")
+            with open(os.path.join(BASE_DIR, "tickets.log"), "r", encoding="utf-8") as f:
+                for line in f:
+                    if line.startswith(f"ID: {t['id']} "):
+                        print(line.strip())
+
+
+        ticket_id = input("\nEnter Ticket ID to reply (or press Enter to go back): ").strip()
+        
+        if not ticket_id:
+            break  
+
+        if ticket_id.isdigit():
+            ticket = next((t for t in user_tickets if t["id"] == ticket_id), None)
+            if ticket:
+                choice = input("'R' to reply, or press Enter to go back: ").strip().lower()
+                if choice == 'r':
+                    reply = input("Enter your reply: ")
+                    ticket["messages"].append({"from": username, "msg": reply})
+                    utils.save_all_tickets(tickets)
+                    print("✅ Reply added.")
+                    time.sleep(1)
+            else:
+                print("⚠ Invalid Ticket ID.")
+                time.sleep(1)
+        else:
+            print("⚠ Please enter a valid number.")
+            time.sleep(1)
+
 
 def Login():
     """Function to handle user login and redirect to dashboard."""
     while True:
         os.system("cls")
         print("\n== HELLO THERE, LOGIN TO CONTINUE ==")
-        username = input("\nEnter Username:_")
-        password = input("Enter password:_")
+        username = input("\nEnter Username:_").strip()
+        password = input("Enter password:_").strip()
         #if not work_hours():
            # print("n\⚠⚠ UNAUTHORIZED LOGIN ATTEMPT OUTSIDE WORK HOURS.")
           #  logs(username, "FAILED LOGIN OUTSIDE WORK HOURS")
          #   time.sleep(2)
         #    break
+        if account_locked(username):
+            time.sleep(2)
+            return
         with open(os.path.join(BASE_DIR, "dataB.txt"), "r", encoding="utf-8") as pass_file:
             hashed_pass = hash_password(password)
             pass_found = False
@@ -180,34 +332,37 @@ def Login():
             print("\nINCORRECT PASSWORD")
             logs(username, "⚠ FAILED LOGIN, INCORRECT PASSWORD")
             time.sleep(1)
+            record_failed_attempt(username)
+            time.sleep(1)
             continue
         if not pass_2fa:
-            logs(username, "⚠ FAILED LOGGING ATTEMPT, INVALID 2FA")
+            logs(username, "⚠ FAILED LOGGING ATTEMPT, INVALID 2FA CODE")
             time.sleep(1)
             continue
         if pass_found and pass_2fa:
-            print("✅ LOGIN SUCCESSFUL")
-            logs(username, "SUCCESSFUL LOGIN")
-            time.sleep(2)
-            os.system("cls")
-            if user_dict["Role"] == "ADMIN" and user_dict["Department"] == "IT":
-                it_admin_dashboard(user_dict)
-            elif user_dict["Role"] == "ENGINEER" and user_dict["Department"] == "IT":
-                it_engineer_dashboard(user_dict)
-            elif user_dict["Role"] == "INTERN" and user_dict["Department"] == "IT":
-                it_intern_dashboard(user_dict)
-            elif user_dict["Role"] == "MANAGER" and user_dict["Department"] == "HR":
-                hr_manager_dashboard(user_dict)
-            elif user_dict["Role"] == "RECRUITER" and user_dict["Department"] == "HR":
-                hr_recruiter_dashboard(user_dict)
-            elif user_dict["Role"] == "CLERK" and user_dict["Department"] == "HR":
-                hr_clerk_dashboard(user_dict)
-            elif user_dict["Role"] == "DIRECTOR" and user_dict["Department"] == "FINANCE":
-                finance_dir_dashboard(user_dict)
-            elif user_dict["Role"] == "ACCOUNTANT" and user_dict["Department"] == "FINANCE":
-                finance_acct_dashboard(user_dict)
-            elif user_dict["Role"] == "CLERK" and user_dict["Department"] == "FINANCE":
-                finance_clerk_dashboard(user_dict)
+            if successful_login(username):
+                print("✅ LOGIN SUCCESSFUL")
+                logs(username, "SUCCESSFUL LOGIN")
+                time.sleep(2)
+                os.system("cls")
+                if user_dict["Role"] == "ADMIN" and user_dict["Department"] == "IT":
+                    it_admin_dashboard(user_dict)
+                elif user_dict["Role"] == "ENGINEER" and user_dict["Department"] == "IT":
+                    it_engineer_dashboard(user_dict)
+                elif user_dict["Role"] == "INTERN" and user_dict["Department"] == "IT":
+                    it_intern_dashboard(user_dict)
+                elif user_dict["Role"] == "MANAGER" and user_dict["Department"] == "HR":
+                    hr_manager_dashboard(user_dict)
+                elif user_dict["Role"] == "RECRUITER" and user_dict["Department"] == "HR":
+                    hr_recruiter_dashboard(user_dict)
+                elif user_dict["Role"] == "CLERK" and user_dict["Department"] == "HR":
+                    hr_clerk_dashboard(user_dict)
+                elif user_dict["Role"] == "DIRECTOR" and user_dict["Department"] == "FINANCE":
+                    finance_dir_dashboard(user_dict)
+                elif user_dict["Role"] == "ACCOUNTANT" and user_dict["Department"] == "FINANCE":
+                    finance_acct_dashboard(user_dict)
+                elif user_dict["Role"] == "CLERK" and user_dict["Department"] == "FINANCE":
+                    finance_clerk_dashboard(user_dict)
 
 def addUser(user_dict):
     print("SELECT DEPARTMENT")
@@ -314,7 +469,7 @@ def addUser(user_dict):
                 it_admin_dashboard(user_dict)
                 break
 
-def menu():
+def menu(username=None):
     """Function to display the main menu and handle user choices."""
     while True:
         os.system("cls")
@@ -328,8 +483,7 @@ def menu():
             break
         elif choice == '2':
             time.sleep(0.5)
-            help_desk()
-            break
+            help_desk(username)
         else:
             print("Invalid Option")
             time.sleep(1)
