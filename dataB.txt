@@ -1,1 +1,2 @@
 Username: ugochukwu || Password: 62e4b0615b13e12bdad84645401c93bf5f9ddcbe309182c48ec22656e4d0d670 || Department: IT || Role: ADMIN || 2FA_Key:UYNVAKXKGS3FUA4B7QC5RWFQB5FPMZET
+Username: fave || Password: f3afda2b82ddaa7518bba212f0a87ed97021bfbd3919319047156781705523b1 || Department: HR || Role: CLERK || 2FA_Key:X4AY2CKFHBLQUYDPWLXLDAM27YZVMTHH

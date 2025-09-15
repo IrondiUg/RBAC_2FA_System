@@ -8,7 +8,7 @@ def append_ticket(ticket):
     with open(TICKETS_FILE, "a", encoding= "utf-8") as f:
         f.write(
             f"ID: {ticket['id']} | User: {ticket['username']} | Issue: {ticket['issue']} | "
-            f"{ticket['status']} | "
+            f"Status: {ticket['status']} | "
             f"Messages: {messages_str}\n"
         )
 def load_tickets():
@@ -42,8 +42,7 @@ def load_tickets():
                 })
     return tickets
 
-def save_all_tickets(tickets):
-    """Rewrite the tickets.log with updated tickets"""
+def save_tickets(tickets):
     with open(TICKETS_FILE, "w", encoding="utf-8") as f:
         for t in tickets:
             messages_str = "; ".join([f"{m['from']}: {m['msg']}" for m in t["messages"]])

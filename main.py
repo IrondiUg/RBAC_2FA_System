@@ -18,9 +18,127 @@ from dashboard import (
     finance_clerk_dashboard,
 )
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+LOCK_FILE = os.path.join(BASE_DIR, "locked.txt")
 login_attempt_limit = 3
 lockout_duration = timedelta(minutes=2)
-login_attempts = {}
+
+def load_login_attempts():
+    attempts = {}
+    if not os.path.exists(LOCK_FILE):
+        with open(LOCK_FILE, "w", encoding="utf-8") as file:
+            file.write("")
+        return attempts
+
+    with open(LOCK_FILE, "r", encoding="utf-8") as file:
+        for line in file:
+            if not line.strip():
+                continue
+            parts = line.strip().split(" || ")
+            user = parts[0]
+            data = {}
+            for p in parts[1:]:
+                if ":" in p:
+                    k, v = p.split(":", 1)
+                    k = k.strip()
+                    v = v.strip()
+                    if k == "failed_attempts":
+                        data[k] = int(v)
+                    elif k == "locked_until":
+                        data[k] = int(v)
+            attempts[user] = data
+    return attempts
+
+def save_login_attempts(attempts):
+    with open(LOCK_FILE, "w", encoding="utf-8") as f:
+        for user, data in attempts.items():
+            line = f"{user}"
+            if "failed_attempts" in data:
+                line += f" || failed_attempts:{int(data['failed_attempts'])}"
+            if "locked_until" in data:
+                line += f" || locked_until:{int(data['locked_until'])}"
+            f.write(line + "\n")
+
+def unlock_accounts(user_dict):
+    username = user_dict["Username"]
+    login_attempts = load_login_attempts()
+    now = time.time()
+    
+    if not login_attempts:
+        print("\n No accounts are currently locked.")
+        time.sleep(2)
+        input("\nPress Enter to go back...")
+        it_admin_dashboard(user_dict)
+    
+    print("\n==Locked Accounts==")
+    lists_of_locked = []
+    for idx, (user, attempts) in enumerate(login_attempts.items(), start=1):
+        if "locked_until" in attempts:
+            locked_until = attempts["locked_until"]
+            if now < locked_until:
+                remaining = int(locked_until - now)
+                minute, sec = divmod(remaining, 60)
+                print(f"{idx}. {user}:  {minute} minutes: {sec} seconds Remaining")
+                lists_of_locked.append(user)
+    if not lists_of_locked:
+        print("\n✅ No accounts are currently locked.")
+        time.sleep(2)
+        return
+    choice = input("\nEnter account ID to unlock:_").strip()
+    if not choice:
+        return
+    if not choice.isdigit() or not 1 <= int(choice) <= len(lists_of_locked):
+        print("Invalid choice.")
+        time.sleep(1)
+        return
+    user_to_unlock = lists_of_locked[int(choice) - 1]
+    pass_correct = False
+    code_2fa_correct = False
+    while True:
+        password = input(f"\nEnter your password to confirm unlock for {user_to_unlock}:_ ").strip()
+        with open(os.path.join(BASE_DIR, "dataB.txt"), "r", encoding="utf-8") as pass_file:
+            hashed_pass = hash_password(password)
+            for line in pass_file:
+                if not line.strip():
+                    continue
+                parts = line.strip().split(" || ")
+                user_data = {p.split(":")[0].strip(): p.split(":")[1].strip() for p in parts}
+                if user_data["Username"] == username and user_data["Password"] == hashed_pass:
+                    pass_correct = True
+                    time.sleep(1)
+                    code = input("\nEnter the 6-digit code from your Authenticator app:_ ")
+                    if verify_2fa(username, code):
+                        code_2fa_correct = True
+                    break
+        if not pass_correct:
+            time.sleep(1)
+            print("\nINCORRECT PASSWORD")
+            logs(username, f"⚠ FAILED UNLOCK ATTEMPT - ({user_to_unlock}), INCORRECT PASSWORD")
+            time.sleep(1)
+            continue
+        if not code_2fa_correct:
+            print("\nINVALID 2FA CODE")
+            logs(username, f"⚠ FAILED UNLOCK ATTEMPT - ({user_to_unlock}), INVALID 2FA CODE")
+            time.sleep(1)
+            continue
+        if login_attempts.get(user_to_unlock, {}).get("locked_until", 0) < time.time():
+            print(f"\n✅ Account <{user_to_unlock}> Already unlocked, Lock Expired.")
+            del login_attempts[user_to_unlock]
+            time.sleep(2)
+            continue
+        
+        if pass_correct and code_2fa_correct:
+            login_attempts = load_login_attempts()
+            if user_to_unlock in login_attempts:
+                login_attempts[user_to_unlock]["locked_until"] = 0
+                login_attempts[user_to_unlock]["failed_attempts"] = 0
+                del login_attempts[user_to_unlock]
+                save_login_attempts(login_attempts)
+            print(f"\n✅ Account '{user_to_unlock}' has been unlocked.")
+            logs(username, "UNLOCKED ACCOUNT:", user_to_unlock)
+            print("\n Press Enter to go back...")
+            input("")
+            it_admin_dashboard(user_dict)
+            return
 
 def create_ticket(username, issue):
     tickets = utils.load_tickets()
@@ -40,6 +158,7 @@ def create_ticket(username, issue):
     return ticket["id"]
 
 def account_locked(username):
+    login_attempts = load_login_attempts()
     now = time.time()
     if username in login_attempts:
         locked_until = login_attempts[username].get("locked_until", 0)
@@ -58,6 +177,7 @@ def account_locked(username):
     return False
 
 def record_failed_attempt(username):
+    login_attempts = load_login_attempts()
     if username not in login_attempts:
         login_attempts[username] = {"failed_attempts": 0, "locked_until": 0}
     login_attempts[username]["failed_attempts"] += 1
@@ -65,14 +185,18 @@ def record_failed_attempt(username):
         lock_till = time.time() + lockout_duration.total_seconds()
         login_attempts[username]["locked_until"] = lock_till
         time.sleep(1)
+        login_attempts[username]["failed_attempts"] = 0
+        save_login_attempts(login_attempts)
         print(f"\nToo Many Failed Attempts!! Account Locked For {lockout_duration.total_seconds()//60} minutes.")
         logs(username, "ACCOUNT LOCKED DUE TO MULTIPLE FAILED LOGIN ATTEMPTS")
         time.sleep(2)
         input("\n\nPress Enter to return...")
-        login_attempts[username]["failed_attempts"] = 0
+    else:
+        save_login_attempts(login_attempts)
 
 def successful_login(username):
     now = time.time()
+    login_attempts = load_login_attempts()
     if username in login_attempts:
         locked_until = login_attempts[username].get("locked_until")
         if locked_until > now:
@@ -82,6 +206,7 @@ def successful_login(username):
             logs(username, "FAILED LOGIN ATTEMPT ON LOCKED ACCOUNT")
             return False
         del login_attempts[username]
+        save_login_attempts(login_attempts)
     return True
 
 def view_database(user_dict):
@@ -273,7 +398,7 @@ def view_my_tickets(username):
                 if choice == 'r':
                     reply = input("Enter your reply: ")
                     ticket["messages"].append({"from": username, "msg": reply})
-                    utils.save_all_tickets(tickets)
+                    utils.save_tickets(tickets)
                     print("✅ Reply added.")
                     time.sleep(1)
             else:

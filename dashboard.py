@@ -3,9 +3,9 @@ import os
 
 def it_admin_dashboard(user_dict):
     os.system("cls")
-    print(f"\nWelcome {user_dict['Username'].upper()} to the IT Admin Dashboard")
+    print(f"\nWelcome <{user_dict['Username']}> to the IT Admin Dashboard")
     print("1. VIEW ALL USERS")
-    print("2. MANAGE IT RESOURCES")
+    print("2. VIEW LOCKED ACCOUNTS")
     print("3. REGISTER A NEW USER")
     print("4. VIEW USER DATABASE")
     print("5. VIEW SYSTEM LOGS")
@@ -16,7 +16,9 @@ def it_admin_dashboard(user_dict):
         if choice == "1":
             pass
         elif choice == "2":
-            pass
+            from main import unlock_accounts
+            time.sleep(1)
+            unlock_accounts(user_dict)
         elif choice == "3":
             from main import addUser, logs
             time.sleep(1)
@@ -42,7 +44,7 @@ def it_admin_dashboard(user_dict):
             time.sleep(1)
         continue
 def it_engineer_dashboard(user_dict):
-    print(f"\nWelcome {user_dict['Username'].upper()} to the IT Engineer Dashboard")
+    print(f"\nWelcome <{user_dict['Username']}> to the IT Engineer Dashboard")
     print("1. VIEW ASSIGNED TASKS")
     print("2. REPORT ISSUES")
     print("3. CONTACT SUPPORT")
@@ -67,7 +69,7 @@ def it_engineer_dashboard(user_dict):
             time.sleep(1)
             continue
 def it_intern_dashboard(user_dict):
-    print(f"\nWelcome {user_dict['Username'].upper()} to the IT Intern Dashboard")
+    print(f"\nWelcome <{user_dict['Username']}> to the IT Intern Dashboard")
     print("1. VIEW LEARNING MATERIALS")
     print("2. SUBMIT INTERN REPORTS")
     print("3. CONTACT SUPPORT")
@@ -92,7 +94,7 @@ def it_intern_dashboard(user_dict):
             time.sleep(1)
             continue
 def hr_manager_dashboard(user_dict):
-    print(f"\nWelcome {user_dict['Username'].upper()} to the HR Manager Dashboard")
+    print(f"\nWelcome <{user_dict['Username']}> to the HR Manager Dashboard")
     print("1. VIEW EMPLOYEE RECORDS")
     print("2. MANAGE HR POLICIES")
     print("3. CONTACT SUPPORT")
@@ -117,7 +119,7 @@ def hr_manager_dashboard(user_dict):
             time.sleep(1)
             continue
 def hr_recruiter_dashboard(user_dict):
-    print(f"\nWelcome {user_dict['Username'].upper()} to the HR Recruiter Dashboard")
+    print(f"\nWelcome <{user_dict['Username']}> to the HR Recruiter Dashboard")
     print("1. VIEW JOB APPLICATIONS")
     print("2. SCHEDULE INTERVIEWS")
     print("3. CONTACT SUPPORT")
@@ -142,7 +144,7 @@ def hr_recruiter_dashboard(user_dict):
             time.sleep(1)
             continue
 def hr_clerk_dashboard(user_dict):
-    print(f"\nWelcome {user_dict['Username'].upper()} to the HR Clerk Dashboard")
+    print(f"\nWelcome <{user_dict['Username']}> to the HR Clerk Dashboard")
     print("1. MANAGE EMPLOYEE RECORDS")
     print("2. ASSIST IN RECRUITMENT")
     print("3. CONTACT SUPPORT")
@@ -167,7 +169,7 @@ def hr_clerk_dashboard(user_dict):
             time.sleep(1)
             continue
 def finance_dir_dashboard(user_dict):
-    print(f"\nWelcome {user_dict['Username'].upper()} to the Finance Director Dashboard")
+    print(f"\nWelcome <{user_dict['Username']}> to the Finance Director Dashboard")
     print("1. VIEW FINANCIAL REPORTS")
     print("2. APPROVE BUDGETS")
     print("3. MANAGE BUDGETS")
@@ -195,7 +197,7 @@ def finance_dir_dashboard(user_dict):
             time.sleep(1)
             continue
 def finance_acct_dashboard(user_dict):
-    print(f"\nWelcome {user_dict['Username'].upper()} to the Finance Accountant Dashboard")
+    print(f"\nWelcome <{user_dict['Username']}> to the Finance Accountant Dashboard")
     print("1. MANAGE ACCOUNTS")
     print("2. PREPARE FINANCIAL STATEMENTS")
     print("3. CONTACT SUPPORT")
@@ -220,7 +222,7 @@ def finance_acct_dashboard(user_dict):
             time.sleep(1)
             continue
 def finance_clerk_dashboard(user_dict):
-    print(f"\nWelcome {user_dict['Username'].upper()} to the Finance Clerk Dashboard")
+    print(f"\nWelcome <{user_dict['Username']}> to the Finance Clerk Dashboard")
     print("1. VIEW EMPLOYEE PAYROLL")
     print("2. MANAGE FINANCIAL DOCUMENTS")
     print("3. CONTACT SUPPORT")

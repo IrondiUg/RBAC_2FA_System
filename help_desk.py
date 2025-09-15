@@ -4,7 +4,7 @@ import os
 import utils
 
 def view_locked_accounts():
-    print("\n==Locked Accounts:==")
+    print("\n==Locked Accounts==")
     for username, attempts in login_attempts.items():
         if "locked_until" in attempts:
             locked_until = attempts["locked_until"]
