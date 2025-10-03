@@ -80,7 +80,7 @@ def unlock_accounts(user_dict):
                 print(f"{idx}. {user}:  {minute} minutes: {sec} seconds Remaining")
                 lists_of_locked.append(user)
     if not lists_of_locked:
-        print("\n✅ No accounts are currently locked.")
+        print("\n No accounts are currently locked.")
         time.sleep(2)
         return
     choice = input("\nEnter account ID to unlock:_").strip()
@@ -112,16 +112,16 @@ def unlock_accounts(user_dict):
         if not pass_correct:
             time.sleep(1)
             print("\nINCORRECT PASSWORD")
-            logs(username, f"⚠ FAILED UNLOCK ATTEMPT - ({user_to_unlock}), INCORRECT PASSWORD")
+            logs(username, f"FAILED UNLOCK ATTEMPT - ({user_to_unlock}), INCORRECT PASSWORD")
             time.sleep(1)
             continue
         if not code_2fa_correct:
             print("\nINVALID 2FA CODE")
-            logs(username, f"⚠ FAILED UNLOCK ATTEMPT - ({user_to_unlock}), INVALID 2FA CODE")
+            logs(username, f"FAILED UNLOCK ATTEMPT - ({user_to_unlock}), INVALID 2FA CODE")
             time.sleep(1)
             continue
         if login_attempts.get(user_to_unlock, {}).get("locked_until", 0) < time.time():
-            print(f"\n✅ Account <{user_to_unlock}> Already unlocked, Lock Expired.")
+            print(f"\nAccount <{user_to_unlock}> Already unlocked, Lock Expired.")
             del login_attempts[user_to_unlock]
             time.sleep(2)
             continue
@@ -133,7 +133,7 @@ def unlock_accounts(user_dict):
                 login_attempts[user_to_unlock]["failed_attempts"] = 0
                 del login_attempts[user_to_unlock]
                 save_login_attempts(login_attempts)
-            print(f"\n✅ Account '{user_to_unlock}' has been unlocked.")
+            print(f"\nAccount '{user_to_unlock}' has been unlocked.")
             logs(username, "UNLOCKED ACCOUNT:", user_to_unlock)
             print("\n Press Enter to go back...")
             input("")
@@ -152,7 +152,7 @@ def create_ticket(username, issue):
     }
     utils.append_ticket(ticket)
     logs(username, "CREATED A SUPPORT TICKET -- ", f"Ticket ID: {ticket['id']}")
-    print(f"\n🎫 Ticket Number ({ticket['id']}) created for {username}.")
+    print(f"\nTicket Number ({ticket['id']}) created for {username}.")
     time.sleep(2)
     help_desk(username)
     return ticket["id"]
@@ -257,7 +257,6 @@ def verify_2fa(username, code):
         for line in file:
             if not line.strip():
                 continue
-            # Split by ' || ' first
             parts = line.strip().split(" || ")
             user_data = {}
             for p in parts:
@@ -275,7 +274,7 @@ def verify_2fa(username, code):
                 totp = pyotp.TOTP(secret)
                 if totp.verify(code):
                     time.sleep(1)
-                    print("\n✅ 2FA verified!")
+                    print("\n2FA verified!")
                     return True
                 else:
                     time.sleep(1)
@@ -342,7 +341,7 @@ def help_desk(username = None):
                         break
 
         if not found:
-            print("\n⚠ User not found. Returning to main menu.")
+            print("\nUser not found. Returning to main menu.")
             time.sleep(1)
             return
     while True:
@@ -369,17 +368,17 @@ def view_my_tickets(username):
     user_tickets = [t for t in tickets if t.get("username") == username and t.get("status") == "OPEN"]
     while True:
         if not user_tickets:
-            print("\n✅ You have no active tickets.")
+            print("\nYou have no active tickets.")
             time.sleep(2)
             return
 
         os.system("cls")
-        print(f"\n📂 Active Tickets for {username}:")
+        print(f"\nActive Tickets for {username}:")
         for t in user_tickets:
             print(f"\n=== Ticket Number - {t['id']} ===")
             print(f"Issue: {t['issue']}")
             print(f"Status: {t['status']}")
-            print("\n💬 List:")
+            print("\nList:")
             with open(os.path.join(BASE_DIR, "tickets.log"), "r", encoding="utf-8") as f:
                 for line in f:
                     if line.startswith(f"ID: {t['id']} "):
@@ -399,25 +398,24 @@ def view_my_tickets(username):
                     reply = input("Enter your reply: ")
                     ticket["messages"].append({"from": username, "msg": reply})
                     utils.save_tickets(tickets)
-                    print("✅ Reply added.")
+                    print("Reply added.")
                     time.sleep(1)
             else:
-                print("⚠ Invalid Ticket ID.")
+                print("Invalid Ticket ID.")
                 time.sleep(1)
         else:
-            print("⚠ Please enter a valid number.")
+            print("Please enter a valid number.")
             time.sleep(1)
 
 
 def Login():
-    """Function to handle user login and redirect to dashboard."""
     while True:
         os.system("cls")
         print("\n== HELLO THERE, LOGIN TO CONTINUE ==")
         username = input("\nEnter Username:_").strip()
         password = input("Enter password:_").strip()
         #if not work_hours():
-           # print("n\⚠⚠ UNAUTHORIZED LOGIN ATTEMPT OUTSIDE WORK HOURS.")
+           # print("n\UNAUTHORIZED LOGIN ATTEMPT OUTSIDE WORK HOURS.")
           #  logs(username, "FAILED LOGIN OUTSIDE WORK HOURS")
          #   time.sleep(2)
         #    break
@@ -455,18 +453,18 @@ def Login():
         if not pwd:
             time.sleep(.8)
             print("\nINCORRECT PASSWORD")
-            logs(username, "⚠ FAILED LOGIN, INCORRECT PASSWORD")
+            logs(username, "FAILED LOGIN, INCORRECT PASSWORD")
             time.sleep(1)
             record_failed_attempt(username)
             time.sleep(1)
             continue
         if not pass_2fa:
-            logs(username, "⚠ FAILED LOGGING ATTEMPT, INVALID 2FA CODE")
+            logs(username, "FAILED LOGGING ATTEMPT, INVALID 2FA CODE")
             time.sleep(1)
             continue
         if pass_found and pass_2fa:
             if successful_login(username):
-                print("✅ LOGIN SUCCESSFUL")
+                print("LOGIN SUCCESSFUL")
                 logs(username, "SUCCESSFUL LOGIN")
                 time.sleep(2)
                 os.system("cls")
@@ -595,7 +593,6 @@ def addUser(user_dict):
                 break
 
 def menu(username=None):
-    """Function to display the main menu and handle user choices."""
     while True:
         os.system("cls")
         print("==HELLO THERE!==")
@@ -614,4 +611,5 @@ def menu(username=None):
             time.sleep(1)
             continue
 if __name__ == "__main__":
+
     menu()
