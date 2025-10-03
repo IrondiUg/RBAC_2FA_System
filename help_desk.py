@@ -17,11 +17,11 @@ def view_locked_accounts():
 def view_tickets():
     tickets = utils.load_tickets()
     if not tickets:
-        print("\n✅ No tickets available.")
+        print("\n No tickets available.")
         time.sleep(2)
         return
     
-    print("\n📂 Active Tickets:")
+    print("\n Active Tickets:")
     for t in tickets:
         print(f"ID: {t['id']} | User: {t['username']} | Issue: {t['issue']} | Status: {t['status']}")
 
@@ -40,7 +40,7 @@ def open_ticket(ticket_id):
     print(f"User: {ticket['username']}")
     print(f"Issue: {ticket['issue']}")
     print(f"Status: {ticket['status']}")
-    print("\n💬 Conversation:")
+    print("\n Details:")
     for m in ticket["messages"]:
         print(f"{m['from']}: {m['msg']}")
 
@@ -55,16 +55,16 @@ def open_ticket(ticket_id):
             reply = input("Enter your reply: ")
             ticket["messages"].append({"from": "support", "msg": reply})
             utils.save_tickets(tickets)
-            print("✅ Reply added.")
+            print("Reply added.")
         elif action == "2":
             ticket["status"] = "CLOSED"
             utils.save_tickets(tickets)
-            print("✅ Ticket closed.")
+            print("Ticket closed.")
             break
         elif action == "3":
             break
         else:
-            print("⚠ Invalid choice.")
+            print("Invalid choice.")
 
 def help_desk():
     while True:
@@ -84,4 +84,5 @@ def help_desk():
             time.sleep(1)
         continue
 if __name__ == "__main__":
+
     help_desk()
