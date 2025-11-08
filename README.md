@@ -1,11 +1,14 @@
 
 ## Core Functionality
-- 👥 **Role-Based Access:** Each user’s permissions are determined by their department and role, ensuring proper access control.
-- 📱 **Multi-Factor Authentication (MFA):** QR-code-based TOTP authentication with Google Authenticator or Authy.
-- 🔏 **Failed Login Attempt Limit:** After 3 failed login attempts, account is locked, to be retreived throught IT support.
-- 🎛️ **Custom Dashboards:** Personalized dashboards for each role provide relevant tools and information.  
-- ⏰ **Time-Based Login Restrictions:** Users can only log in during working hours (8 AM–4 PM) unless granted admin authorization.  
-- 📌 **Comprehensive Activity Tracking:** Every login, logout, and action is recorded for audit and accountability purposes.
+-  **Role-Based Authentication:** Every user is assigned a specific role (Admin, IT, HR, Finance, etc.), and access is granted strictly based on that role’s permissions.
+-	**Two-Factor Authentication (2FA):** Adds an extra verification step after password login to strengthen account security.
+-	**Admin-Only User Creation:** Only admins can add or manage users, ensuring centralized control and preventing unauthorized access.
+-	**Account Lockout Policy:** After 3 failed login attempts, an account is automatically locked to prevent brute-force attacks.
+-	**Timed Auto-Unlock:** Locked accounts unlock automatically after 5 minutes, reducing downtime while maintaining security.
+-	**Admin/IT Unlock Override:** Admins or IT support can manually unlock accounts upon legitimate user requests.
+-	**Session Tracking:** Logs user logins, logouts, and activities with timestamps for audit and accountability.
+-	**Time-Based Access Restriction:** Users can log in only between 8 AM and 4 PM; admin authorization is required outside this window.
+
 
 ```
 RBAC-System/
@@ -36,6 +39,7 @@ RBAC-System/
 - For any issues, please open an issue on the GitHub repository.
 
 - Contributions are welcome! Feel free to fork the repository and submit pull requests.
+
 
 
 
