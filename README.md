@@ -40,6 +40,9 @@ RBAC-System/
 
 - Contributions are welcome! Feel free to fork the repository and submit pull requests.
 
+## Video Demo
+https://github.com/user-attachments/assets/5db24805-a55a-431d-ae65-55b0af0eb4fd
+
 
 
 
