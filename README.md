@@ -30,7 +30,7 @@ RBAC-System/
 ```
 ## Note
 - For the time based access control, uncomment this section in main.py to be able to use it, it works with your machine time.
-   ![see image](https://img001.prntscr.com/file/img001/UDt7TrxGTEmGFvul7NR_mw.png)
+   ![Screenshot 2025-12-19 185617](https://github.com/user-attachments/assets/89951de2-72d9-482f-afa9-ee26bc77fdba)
 - Some default logging credentials are in user.txt
 - default users have 2fa appended already, to get the codes, scan the generated QRcodes in [User_QRcodes folder](User_QRcodes/) with an authenticator app or manually add the 2FA key in dataB.txt
 
@@ -42,6 +42,7 @@ RBAC-System/
 
 ## Video Demo
 https://github.com/user-attachments/assets/5db24805-a55a-431d-ae65-55b0af0eb4fd
+
 
 
 
