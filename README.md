@@ -1,5 +1,5 @@
 
-## Core Functionality
+## Core Functionalities
 -  **Role-Based Authentication:** Every user is assigned a specific role (Admin, IT, HR, Finance, etc.), and access is granted strictly based on that role’s permissions.
 -	**Two-Factor Authentication (2FA):** Adds an extra verification step after password login to strengthen account security.
 -	**Admin-Only User Creation:** Only admins can add or manage users, ensuring centralized control and preventing unauthorized access.
@@ -9,7 +9,7 @@
 -	**Session Tracking:** Logs user logins, logouts, and activities with timestamps for audit and accountability.
 -	**Time-Based Access Restriction:** Users can log in only between 8 AM and 4 PM; admin authorization is required outside this window.
 
-
+## Project Architecture
 ```
 RBAC-System/
 │
@@ -42,6 +42,7 @@ RBAC-System/
 
 ## Video Demo
 https://github.com/user-attachments/assets/5db24805-a55a-431d-ae65-55b0af0eb4fd
+
 
 
 
